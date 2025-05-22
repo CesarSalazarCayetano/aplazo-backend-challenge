@@ -96,3 +96,4 @@ Please use the following tools to develop the project:
 
 
 > Development of the test must be done in a branch named `feature/[candidate's first name]_[candidate's last name]` (if there are conflicts, add the second last name), for example: `feature/juan_perez`. Instead of making a pull request to the master branch, the candidate must provide access to their repository where the take-home test is hosted using a token.
+
