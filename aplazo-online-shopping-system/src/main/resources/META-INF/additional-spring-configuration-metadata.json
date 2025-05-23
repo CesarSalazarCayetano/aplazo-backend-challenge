@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "aplazo.rate.limit.amount.request.public.api",
+    "type": "java.lang.Integer",
+    "description": "Define a total request that a client can do at public API"
+  },
+  {
+    "name": "aplazo.rate-limit.duration.public.api",
+    "type": "java.lang.Integer",
+    "description": "Time in minutes where the rate limit is active"
+  }
+]}
