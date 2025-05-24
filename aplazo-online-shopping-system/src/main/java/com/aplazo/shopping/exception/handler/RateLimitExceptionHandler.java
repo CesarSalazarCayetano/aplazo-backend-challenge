@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.aplazo.shopping.handler.exception;
+package com.aplazo.shopping.exception.handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
