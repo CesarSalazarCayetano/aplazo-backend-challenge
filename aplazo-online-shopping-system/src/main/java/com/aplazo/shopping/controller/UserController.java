@@ -8,14 +8,11 @@ import java.util.List;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,7 +25,6 @@ import com.aplazo.shopping.exception.utils.ExceptionUtils;
 import com.aplazo.shopping.model.dao.Customer;
 import com.aplazo.shopping.model.dao.User;
 import com.aplazo.shopping.response.http.ApiResponseEntityData;
-import com.aplazo.shopping.response.model.ApiResponse;
 import com.aplazo.shopping.security.config.request.LoginRequest;
 import com.aplazo.shopping.security.config.request.SignUpRequest;
 import com.aplazo.shopping.security.config.response.JwtResponse;
@@ -85,9 +81,11 @@ public class UserController {
 			e.printStackTrace();
 			throw new ApiException(ErrorCode.BAD_USER_CREDENTIALS);
 		}
-		return new ApiResponseEntityData<>().responseEntitySuccessData(null, HttpStatus.OK, "Login success", token);
+		JwtResponse response = new JwtResponse(loginRequest.getEmail(), token);
+		return new ApiResponseEntityData<>().responseEntitySuccessData(null, HttpStatus.OK, "Login success", response);
 	}
 	
+	@RateLimiter(name = "public-api")
 	@PostMapping("/sign-up")
 	public ResponseEntity<?> signUp(@RequestBody @Valid SignUpRequest signUpRequest, BindingResult bindingResult) {
 		this.validateFields(bindingResult, signUpRequest.getEmail());
@@ -103,7 +101,7 @@ public class UserController {
 		final UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(signUpRequest.getEmail());
 		final String token = JWTUtils.generateToken(user.getEmail(), userDetails);
 		
-		JwtResponse response = new JwtResponse(signUpRequest.getEmail(), userSave.getUserRole().getUserRole(), token);
+		JwtResponse response = new JwtResponse(signUpRequest.getEmail(), token);
 		
 		return new ApiResponseEntityData<>().responseEntitySuccessData(null, HttpStatus.CREATED, "User save", response);
 	}
