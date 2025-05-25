@@ -6,17 +6,16 @@ package com.aplazo.shopping.response.http;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.aplazo.shopping.response.model.ApiResponse;
+import com.aplazo.shopping.response.model.ApiResponseData;
 
 /**
  * Class to return in all application a single object.
  * Used when the result is success.
  * @author CesarSalazar 
  */
-public class ApiResponseEntity {
+public class ApiResponseEntityData<T> {
 	
-	public static ResponseEntity<ApiResponse> responseEntitySuccess(String value, boolean success,
-			HttpStatus httpCode, String message){
-		return new ResponseEntity<ApiResponse>(new ApiResponse(value, success, httpCode.value(), message), httpCode);
+	public ResponseEntity<?> responseEntitySuccessData(String value, HttpStatus httpCode, String message, T data){
+		return new ResponseEntity<ApiResponseData<T>>(new ApiResponseData<T>(value, true, httpCode.value(), message, data), httpCode);
 	}
 }

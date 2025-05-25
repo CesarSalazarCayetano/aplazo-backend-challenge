@@ -4,8 +4,8 @@
 package com.aplazo.shopping.response.model;
 
 import java.time.Instant;
+import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -28,6 +28,7 @@ public class ApiResponse {
 	private Long timeStamp;
 	private String path;
 	private String message;
+	private List<String> errorFields;
 	
 	public ApiResponse() {
 		super();
@@ -42,7 +43,7 @@ public class ApiResponse {
 	 * @param path
 	 * @param message
 	 */
-	public ApiResponse(String code, boolean success, int httpCode, String path, String message) {
+	public ApiResponse(String code, boolean success, int httpCode, String path, String message, List<String> errorFields) {
 		super();
 		this.code = code;
 		this.success = success;
@@ -50,6 +51,7 @@ public class ApiResponse {
 		this.timeStamp = this.getTimeStamp();
 		this.path = path;
 		this.message = message;
+		this.errorFields = errorFields;
 	}
 
 	/*
