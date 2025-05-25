@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.aplazo.shopping.model.dao.Customer;
 
 /**
- * 
+ * @author CesarSalazar
  */
 @Repository
 public interface ICustomerRepository extends JpaRepository<Customer, UUID> {

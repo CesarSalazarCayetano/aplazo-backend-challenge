@@ -13,8 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.aplazo.shopping.model.dao.Customer;
 import com.aplazo.shopping.model.dao.User;
 import com.aplazo.shopping.model.dao.UserRole;
-import com.aplazo.shopping.repository.ICustomerRepository;
 import com.aplazo.shopping.repository.IUserRepository;
+import com.aplazo.shopping.security.config.request.SignUpRequest;
+import com.aplazo.shopping.security.util.mapper.DtoMapper;
+import com.aplazo.shopping.service.ICreditLineService;
+import com.aplazo.shopping.service.ICustomerService;
 import com.aplazo.shopping.service.IUserRoleService;
 import com.aplazo.shopping.service.IUserService;
 
@@ -31,21 +34,30 @@ public class UserServiceImpl implements IUserService {
 	@Autowired
 	private IUserRepository iUserRepository;
 	@Autowired
-	private ICustomerRepository iCustomerRepository;
+	private ICustomerService iCustomerservice;
+	@Autowired
+	private ICreditLineService iCreditLineService;
 	
 	@Transactional(rollbackFor = {IllegalArgumentException.class, SQLException.class})
 	@Override
-	public User save(User user) {
-		UserRole userRole = this.iUserRoleService.getByUserRole("USER");
-		// TODO: update this reference, when want another ROLE 
-		user.setUserRole(userRole);
-		user.setPassword(crypt.encode(user.getPassword()));
-		User saveUser = this.iUserRepository.save(user);
+	public User save(SignUpRequest signUpRequest) {
+		Customer customerFromDTO = DtoMapper.signUpToCustomer(signUpRequest);
+		User userFromDTO = DtoMapper.signUpToUser(signUpRequest);
+		userFromDTO.setCustomer(customerFromDTO);
 		
-		Customer customer = user.getCustomer();
+		UserRole userRole = this.iUserRoleService.getByUserRole("USER"); 
+		userFromDTO.setUserRole(userRole);
+		userFromDTO.setPassword(crypt.encode(userFromDTO.getPassword()));
+		
+		User saveUser = this.iUserRepository.save(userFromDTO);
+		
+		Customer customer = userFromDTO.getCustomer();
 		customer.setUser(saveUser);
 		
-		this.iCustomerRepository.save(customer);
+		Customer saveCustomer = this.iCustomerservice.save(customer);
+		
+		this.iCreditLineService.creditLineAssignment(saveCustomer, signUpRequest.getAge());
+		
 		return saveUser;
 	}
 
@@ -54,6 +66,5 @@ public class UserServiceImpl implements IUserService {
 	public User findByEmail(String email) {
 		return this.iUserRepository.findByEmail(email);
 	}
-
 	
 }

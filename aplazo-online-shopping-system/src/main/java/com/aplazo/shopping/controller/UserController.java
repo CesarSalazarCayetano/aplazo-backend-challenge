@@ -31,6 +31,7 @@ import com.aplazo.shopping.security.config.response.JwtResponse;
 import com.aplazo.shopping.security.service.JWTUserDetailsService;
 import com.aplazo.shopping.security.util.JWTUtils;
 import com.aplazo.shopping.security.util.mapper.DtoMapper;
+import com.aplazo.shopping.service.ICustomerService;
 import com.aplazo.shopping.service.IUserService;
 
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
@@ -45,6 +46,8 @@ public class UserController {
 	
 	@Autowired
 	private IUserService iUserService;
+	@Autowired
+	private ICustomerService iCustomerService;
 	@Autowired
 	private JWTUserDetailsService jwtUserDetailsService;
 	@Autowired
@@ -92,11 +95,12 @@ public class UserController {
 		if(this.validateEmailExist(signUpRequest.getEmail())) {
 			throw new ApiException(ErrorCode.USER_ALREADY_EXIST);
 		}
-		Customer customer = DtoMapper.signUpToCustomer(signUpRequest);
-		User user = DtoMapper.signUpToUser(signUpRequest);
-		user.setCustomer(customer);
-		
-		User userSave = this.iUserService.save(user);
+		Integer age = this.iCustomerService.isValidDateOfBirt(signUpRequest.getDateOfBirth());
+		if(age == null) {
+			throw new ApiException(ErrorCode.BAD_AGE);
+		}
+		signUpRequest.setAge(age);
+		User user = this.iUserService.save(signUpRequest);
 		
 		final UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(signUpRequest.getEmail());
 		final String token = JWTUtils.generateToken(user.getEmail(), userDetails);

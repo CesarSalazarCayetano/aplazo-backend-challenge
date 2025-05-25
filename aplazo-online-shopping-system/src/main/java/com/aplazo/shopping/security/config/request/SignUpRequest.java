@@ -6,6 +6,7 @@ package com.aplazo.shopping.security.config.request;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -29,6 +30,9 @@ public class SignUpRequest extends LoginRequest {
 	
 	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone = "EST")
 	private Date dateOfBirth;
+	
+	@JsonIgnore
+	private Integer age;
 
 	public SignUpRequest() {
 		super();
