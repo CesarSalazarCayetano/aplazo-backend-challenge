@@ -7,7 +7,11 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
-import org.springframework.format.annotation.DateTimeFormat;
+import org.hibernate.annotations.CreationTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -21,6 +25,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -56,20 +61,22 @@ public class Customer {
 	@Column(name = "second_last_name", nullable = false, length = 50)
 	private String secondLastName;
 	
-	@NotBlank(message = "The field date of birth cannot be empty")
+	@NotNull(message = "The field date of birth cannot be null")
+	@Column(name = "date_of_birth")
 	@Temporal(TemporalType.DATE)
-	@DateTimeFormat(pattern = "dd/MM/yyyy")
-	@Column(name = "date_of_birth", nullable = false)
+	@JsonFormat(shape = Shape.STRING, pattern = "dd/MM/yyyy")
 	private Date dateOfBirth;
 	
-	@Column(name = "created_at")
+	@Column(name = "created_at", updatable = false)
+	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
 	private LocalDateTime createdAt; 
 	
 	@OneToOne(mappedBy = "customer", cascade = CascadeType.PERSIST)
 	private CreditLine creditLine;
 	
-	@OneToOne
+	@OneToOne(cascade = CascadeType.PERSIST)
+	@JsonBackReference
 	@JoinColumn(name = "id_user")
 	private User user;
 }

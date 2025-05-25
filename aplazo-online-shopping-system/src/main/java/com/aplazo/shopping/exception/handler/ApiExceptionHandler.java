@@ -32,7 +32,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	public ResponseEntity<ApiResponse> handlerApiException(ApiException exception, HttpServletRequest request){
 		ErrorCode errorCode = exception.getErrorCode();
 		ApiResponse apiResponse = 
-				new ApiResponse(errorCode.getCode(), false, errorCode.getHttpCode().value(), request.getRequestURI(), errorCode.getMessage());
+				new ApiResponse(errorCode.getCode(), false, errorCode.getHttpCode().value(), request.getRequestURI(), errorCode.getMessage(), exception.getErrorFields());
 		return new ResponseEntity<ApiResponse>(apiResponse, errorCode.getHttpCode());
 	}
 	
@@ -47,7 +47,21 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		exception.printStackTrace();
 		ErrorCode errorCode = ErrorCode.TOO_MANY_REQUEST;
 		ApiResponse apiResponse = 
-				new ApiResponse(errorCode.getCode(), false, errorCode.getHttpCode().value(), request.getRequestURI(), errorCode.getMessage());
+				new ApiResponse(errorCode.getCode(), false, errorCode.getHttpCode().value(), request.getRequestURI(), errorCode.getMessage(), null);
 		return new ResponseEntity<ApiResponse>(apiResponse, errorCode.getHttpCode());
 	}
+
+//	@Override
+//	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+//			HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+//		Map<String, String> errors = ex.getBindingResult().getFieldErrors().stream()
+//				.collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
+//		
+//		ErrorCode errorCode = ErrorCode.VALUES_NOT_VALID;
+//		ApiResponse apiResponse = 
+//				new ApiResponse(errorCode.getCode(), false, errorCode.getHttpCode().value(), null, errors.toString());
+//		return new ResponseEntity<Object>(apiResponse, errorCode.getHttpCode());
+//	}
+	
+	
 }
