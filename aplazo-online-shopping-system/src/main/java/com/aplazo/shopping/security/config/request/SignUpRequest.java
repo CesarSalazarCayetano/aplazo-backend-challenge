@@ -28,7 +28,7 @@ public class SignUpRequest extends LoginRequest {
 	@NotBlank(message = "The second last name cannot be empty.")
 	private String secondLastName;
 	
-	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone = "EST")
+	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone = "CST")
 	private Date dateOfBirth;
 	
 	@JsonIgnore
