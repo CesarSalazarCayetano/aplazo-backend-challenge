@@ -6,7 +6,6 @@ package com.aplazo.shopping.security.config.request;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -28,7 +27,7 @@ public class SignUpRequest extends LoginRequest {
 	@NotBlank(message = "The second last name cannot be empty.")
 	private String secondLastName;
 	
-	@JsonFormat(shape = Shape.STRING, pattern = "dd/MM/yyyy")
+	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone = "EST")
 	private Date dateOfBirth;
 
 	public SignUpRequest() {

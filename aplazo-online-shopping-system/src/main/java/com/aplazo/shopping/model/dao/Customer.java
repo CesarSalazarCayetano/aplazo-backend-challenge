@@ -11,7 +11,6 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -64,7 +63,7 @@ public class Customer {
 	@NotNull(message = "The field date of birth cannot be null")
 	@Column(name = "date_of_birth")
 	@Temporal(TemporalType.DATE)
-	@JsonFormat(shape = Shape.STRING, pattern = "dd/MM/yyyy")
+	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone = "EST")
 	private Date dateOfBirth;
 	
 	@Column(name = "created_at", updatable = false)
