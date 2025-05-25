@@ -31,6 +31,7 @@ import com.aplazo.shopping.response.http.ApiResponseEntityData;
 import com.aplazo.shopping.response.model.ApiResponse;
 import com.aplazo.shopping.security.config.request.LoginRequest;
 import com.aplazo.shopping.security.config.request.SignUpRequest;
+import com.aplazo.shopping.security.config.response.JwtResponse;
 import com.aplazo.shopping.security.service.JWTUserDetailsService;
 import com.aplazo.shopping.security.util.JWTUtils;
 import com.aplazo.shopping.security.util.mapper.DtoMapper;
@@ -102,7 +103,9 @@ public class UserController {
 		final UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(signUpRequest.getEmail());
 		final String token = JWTUtils.generateToken(user.getEmail(), userDetails);
 		
-		return new ApiResponseEntityData<>().responseEntitySuccessData(null, HttpStatus.CREATED, "User registred", token);
+		JwtResponse response = new JwtResponse(signUpRequest.getEmail(), userSave.getUserRole().getUserRole(), token);
+		
+		return new ApiResponseEntityData<>().responseEntitySuccessData(null, HttpStatus.CREATED, "User save", response);
 	}
 	
 	private void validateFields(BindingResult bindingResult, String email) {
