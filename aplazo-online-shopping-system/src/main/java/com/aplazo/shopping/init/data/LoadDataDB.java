@@ -7,12 +7,17 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.aplazo.shopping.model.dao.CreditLineRule;
 import com.aplazo.shopping.model.dao.PaymentScheme;
+import com.aplazo.shopping.model.dao.User;
+import com.aplazo.shopping.model.dao.UserRole;
 import com.aplazo.shopping.repository.ICreditLineRuleRepository;
 import com.aplazo.shopping.repository.IPaymentSchemeRepository;
+import com.aplazo.shopping.repository.IUserRepository;
+import com.aplazo.shopping.repository.IUserRoleRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,6 +30,15 @@ import lombok.extern.slf4j.Slf4j;
 public class LoadDataDB implements CommandLineRunner {
 
 	@Autowired
+	PasswordEncoder crypt;
+	
+	@Autowired
+	private IUserRepository iUserRepository;	
+	
+	@Autowired
+	private IUserRoleRepository iUserRoleRepository;
+	
+	@Autowired
 	private ICreditLineRuleRepository iCreditLineRuleRepository;
 	
 	@Autowired
@@ -33,9 +47,33 @@ public class LoadDataDB implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		log.info("System started, validating if DB is empty...");
+		this.validateUserRolesExist();
+		this.validateUserExist();
 		this.validateCreditLineRulesExist();
 		this.validatePaymentSchemeExist();
 		log.info("System loaded.");
+	}
+	
+	private void validateUserRolesExist() {
+		if(this.iUserRoleRepository.findAll().size() == 0) {
+			this.iUserRoleRepository.saveAll(
+				List.of(
+					UserRole.builder().userRole("ADMIN").build(),
+					UserRole.builder().userRole("USER").build()
+				)
+			);
+		}
+	}
+	
+	private void validateUserExist() {
+		if(this.iUserRepository.findAll().size() == 0) {
+			UserRole userRole = this.iUserRoleRepository.findByUserRole("ADMIN");
+			this.iUserRepository.saveAll(
+				List.of(
+					User.builder().email("admin@admin.com").password(this.crypt.encode("Admin@25")).userRole(userRole).build()
+				)
+			);
+		}
 	}
 
 	private void validateCreditLineRulesExist() {

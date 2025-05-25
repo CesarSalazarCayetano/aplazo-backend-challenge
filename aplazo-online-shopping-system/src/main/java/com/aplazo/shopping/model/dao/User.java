@@ -9,6 +9,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
@@ -42,17 +44,17 @@ public class User {
 	@Column(length = 100)
 	@NotBlank(message = "The field password cannot be empty")
 	private String password;
-	
-	@Column(length = 10)
-	@NotBlank(message = "The field role cannot be empty")
-	private String role;
-	
+		
 	@OneToOne(mappedBy = "user", cascade = CascadeType.PERSIST)
 	private Customer customer;
 
+	@ManyToOne(cascade = CascadeType.REFRESH)
+	@JoinColumn(name = "id_user_role")
+	private UserRole userRole;
+	
 	@Override
 	public String toString() {
-		return "User [idUser=" + idUser + ", email=" + email + ", password=" + password + ", role=" + role + "]";
+		return "User [idUser=" + idUser + ", email=" + email + ", password=" + password + "]";
 	}
 	
 }

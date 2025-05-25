@@ -76,9 +76,10 @@ public class UserController {
 			throw new ApiException(ErrorCode.BAD_USER_CREDENTIALS);
 		}
 		String token = null;
+		final UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(loginRequest.getEmail());
 		try {
 			this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-			token = JWTUtils.generateToken(loginRequest.getEmail());
+			token = JWTUtils.generateToken(loginRequest.getEmail(), userDetails);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ApiException(ErrorCode.BAD_USER_CREDENTIALS);
@@ -92,14 +93,14 @@ public class UserController {
 		if(this.validateEmailExist(signUpRequest.getEmail())) {
 			throw new ApiException(ErrorCode.USER_ALREADY_EXIST);
 		}
-		//final UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(signUpRequest.getEmail());
 		Customer customer = DtoMapper.signUpToCustomer(signUpRequest);
 		User user = DtoMapper.signUpToUser(signUpRequest);
 		user.setCustomer(customer);
 		
 		User userSave = this.iUserService.save(user);
 		
-		final String token = JWTUtils.generateToken(user.getEmail());
+		final UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(signUpRequest.getEmail());
+		final String token = JWTUtils.generateToken(user.getEmail(), userDetails);
 		
 		return new ApiResponseEntityData<>().responseEntitySuccessData(null, HttpStatus.CREATED, "User registred", token);
 	}

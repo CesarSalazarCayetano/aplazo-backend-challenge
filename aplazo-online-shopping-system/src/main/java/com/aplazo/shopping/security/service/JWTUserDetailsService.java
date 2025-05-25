@@ -18,6 +18,7 @@ import com.aplazo.shopping.enums.ErrorCode;
 import com.aplazo.shopping.exception.ApiException;
 import com.aplazo.shopping.model.dao.User;
 import com.aplazo.shopping.repository.IUserRepository;
+import com.aplazo.shopping.security.util.JWTUtils;
 
 /**
  * Class to validate the user with a repository.
@@ -27,8 +28,6 @@ import com.aplazo.shopping.repository.IUserRepository;
 @Service
 public class JWTUserDetailsService implements UserDetailsService {
 
-	private static final String PREFIX_ROLE = "ROLE_";
-	
 	@Autowired
 	private IUserRepository iUserRepository;
 	
@@ -39,7 +38,7 @@ public class JWTUserDetailsService implements UserDetailsService {
 		if(user == null) {
 			throw new ApiException(ErrorCode.USER_NOT_FOUND);
 		}
-		authorithies.add(new SimpleGrantedAuthority(PREFIX_ROLE + user.getRole()));
+		authorithies.add(new SimpleGrantedAuthority(JWTUtils.PREFIX_ROLE + user.getUserRole().getUserRole()));
 		return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), authorithies);
 	}
 

@@ -15,7 +15,6 @@ public class DtoMapper {
 		return User.builder()
 				.email(request.getEmail())
 				.password(request.getPassword())
-				.role("USER")
 				.build();
 	}
 	
