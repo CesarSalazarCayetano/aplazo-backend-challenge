@@ -17,6 +17,10 @@ import com.aplazo.shopping.service.ILoanService;
 import com.aplazo.shopping.service.IPaymentService;
 
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 import java.util.UUID;
@@ -36,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 /**
  * @author CesarSalazar
  */
+@Tag(name = "REST Service for Installments", description = "This service manage installments for each loan.")
 @RestController
 @RateLimiter(name = "protected-api")
 @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
@@ -47,8 +52,14 @@ public class InstallmentController {
 	@Autowired
 	private ILoanService iLoanService;
 	
+	@Operation(summary = "findInstallment", description = "This method find the info installment by id.")
+	@ApiResponses(value = {
+            @ApiResponse (responseCode = "200", description = "The Installment data was returned successfully"),
+            @ApiResponse (responseCode = "404", description = "Not found if payment doesnt exist")
+		}
+	)
 	@GetMapping("/{idInstallment}")
-	public ResponseEntity<?> getMethodName(
+	public ResponseEntity<?> findInstallment(
 			@RequestHeader(name = JWTUtils.HEADER) String token,
 			@PathVariable UUID idInstallment) {
 		Payment payment = this.iPaymentService.findById(idInstallment);
@@ -61,8 +72,16 @@ public class InstallmentController {
 		return new ApiResponseEntityData<>().responseEntitySuccessData(null, HttpStatus.OK, null, installmentResponse);
 	}
 	
+	@Operation(summary = "createInstallment", description = "This method create a new installment associated to a loan and this is associated to a line credit.")
+	@ApiResponses(value = {
+			@ApiResponse (responseCode = "200", description = "If they are not more installments to do"),
+            @ApiResponse (responseCode = "201", description = "The Installment was created successfully"),
+            @ApiResponse (responseCode = "400", description = "Bad request if exist errors on body fields"),
+            @ApiResponse (responseCode = "404", description = "Not found if the Loan doesnt exist"),
+		}
+	)
 	@PostMapping()
-	public ResponseEntity<?> postMethodName(
+	public ResponseEntity<?> createInstallment(
 			@RequestHeader(name = JWTUtils.HEADER) String token,
 			@RequestBody @Valid InstallmentRequest installmentRequest,
 			BindingResult bindingResult) {
@@ -81,7 +100,7 @@ public class InstallmentController {
 				payment.getScheduledPaymentDate(), 
 				payment.getCreatedAt());
 		
-		return new ApiResponseEntityData<>().responseEntitySuccessData(null, HttpStatus.OK, "Success payment.", installmentResponse);
+		return new ApiResponseEntityData<>().responseEntitySuccessData(null, HttpStatus.CREATED, "Success payment.", installmentResponse);
 	}
 	
 }

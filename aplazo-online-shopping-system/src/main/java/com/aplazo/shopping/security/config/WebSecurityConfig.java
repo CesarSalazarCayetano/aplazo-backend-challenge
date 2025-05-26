@@ -44,7 +44,18 @@ public class WebSecurityConfig {
         return configuration.getAuthenticationManager();
     }
 	
-	private final String[] WHITE_LIST = {"/public/user/**"};
+	private final String[] WHITE_LIST = {
+			"/public/user/**", 
+			"/v2/api-docs",
+	        "/swagger-resources",
+	        "/swagger-resources/**",
+	        "/configuration/ui",
+	        "/configuration/security",
+	        "/swagger-ui.html",
+	        "/webjars/**",
+	        "/v3/api-docs/**",
+	        "/swagger-ui/**"
+			};
 	
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {

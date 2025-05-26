@@ -27,11 +27,16 @@ import com.aplazo.shopping.security.util.JWTUtils;
 import com.aplazo.shopping.service.IUserService;
 
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 /**
  * @author CesarSalazar
  */
+@Tag(name = "REST Service for User", description = "This service manage auth methods for autenticate.")
 @RestController
 @RequestMapping("/public/user")
 public class UserController {
@@ -43,6 +48,12 @@ public class UserController {
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
+	@Operation(summary = "login", description = "This method authenticated on the API, this must have called after signUp.")
+	@ApiResponses(value = {
+            @ApiResponse (responseCode = "201", description = "User was created"),
+            @ApiResponse (responseCode = "400", description = "Bad request, can be invalid body data")
+		}
+	)
 	@RateLimiter(name = "public-api")
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest, BindingResult bindingResult) {
@@ -63,6 +74,12 @@ public class UserController {
 		return new ApiResponseEntityData<>().responseEntitySuccessData(null, HttpStatus.OK, "Login success", response);
 	}
 	
+	@ApiResponses(value = {
+            @ApiResponse (responseCode = "201", description = "User was created"),
+            @ApiResponse (responseCode = "400", description = "Bad request, can be invalid body data or duplicated data")
+		}
+	)
+	@Operation(summary = "sing-up", description = "This method register a new user on the API.")
 	@RateLimiter(name = "public-api")
 	@PostMapping("/sign-up")
 	public ResponseEntity<?> signUp(@RequestBody @Valid LoginRequest loginRequest, BindingResult bindingResult) {

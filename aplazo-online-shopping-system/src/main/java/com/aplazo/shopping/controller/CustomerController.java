@@ -31,11 +31,16 @@ import com.aplazo.shopping.service.ICustomerService;
 import com.aplazo.shopping.service.IUserService;
 
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * 
  */
+@Tag(name = "REST Service for Customer", description = "This service manage customer credit lines.")
 @RestController
 @RequestMapping("/protected/customers")
 @RateLimiter(name = "protected-api")
@@ -47,8 +52,14 @@ public class CustomerController {
 	@Autowired
 	private ICustomerService iCustomerService;
 
+	@Operation(summary = "findCustomer", description = "This method find the info by id customer.")
+	@ApiResponses(value = {
+            @ApiResponse (responseCode = "200", description = "The data was returned successfully"),
+            @ApiResponse (responseCode = "404", description = "Not found if the customer doesnt exist")
+		}
+	)
 	@GetMapping(path = "/{id}")
-	public ResponseEntity<?> getMethodName(@RequestHeader(name = JWTUtils.HEADER) String token,
+	public ResponseEntity<?> findCustomer(@RequestHeader(name = JWTUtils.HEADER) String token,
 			@PathVariable UUID id) {
 		Customer customer = this.iCustomerService.findById(id);
 		
@@ -60,7 +71,12 @@ public class CustomerController {
 		return new ApiResponseEntityData<>().responseEntitySuccessData(null, HttpStatus.OK, null, customerResponse);
 	}
 	
-	
+	@Operation(summary = "createCustomer", description = "This method create a new customer and after his credit line.")
+	@ApiResponses(value = {
+            @ApiResponse (responseCode = "201", description = "The customer was created successfully"),
+            @ApiResponse (responseCode = "400", description = "Bad request if exist errors on body fields or the age are not valid")
+		}
+	)
 	@PostMapping()
 	public ResponseEntity<?> createCustomer(HttpServletRequest request, 
 			@RequestHeader(name = JWTUtils.HEADER) String token,

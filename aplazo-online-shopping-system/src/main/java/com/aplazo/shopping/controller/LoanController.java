@@ -27,11 +27,16 @@ import com.aplazo.shopping.security.util.JWTUtils;
 import com.aplazo.shopping.service.ILoanService;
 
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 /**
  * @author CesarSalazar
  */
+@Tag(name = "REST Service for Loan", description = "This service manage loans request.")
 @RestController
 @RequestMapping("/protected/loans")
 @RateLimiter(name = "protected-api")
@@ -41,8 +46,14 @@ public class LoanController {
 	@Autowired
 	private ILoanService iLoanService;
 	
+	@Operation(summary = "getLoan", description = "This method find the loan info by id.")
+	@ApiResponses(value = {
+            @ApiResponse (responseCode = "200", description = "The Loan was returned successfully"),
+            @ApiResponse (responseCode = "404", description = "Not found if loan doesnt exist")
+		}
+	)
 	@GetMapping(path = "/{idLoan}")
-	public ResponseEntity<?> getMethodName(
+	public ResponseEntity<?> getLoan(
 			@RequestHeader(name = JWTUtils.HEADER) String token,
 			@PathVariable UUID idLoan) {
 		Loan loan = this.iLoanService.findById(idLoan);
@@ -54,8 +65,14 @@ public class LoanController {
 		return new ApiResponseEntityData<>().responseEntitySuccessData(null, HttpStatus.OK, null, loanResponse);
 	}
 	
+	@Operation(summary = "createLoan", description = "This method create a new loan associated to a line credit.")
+	@ApiResponses(value = {
+            @ApiResponse (responseCode = "201", description = "The Loan was created successfully"),
+            @ApiResponse (responseCode = "400", description = "Bad request if exist errors on body fields, or some id or value relationated doesnt exist")
+		}
+	)
 	@PostMapping()
-	public ResponseEntity<?> postMethodName(
+	public ResponseEntity<?> createLoan(
 			@RequestHeader(name = JWTUtils.HEADER) String token,
 			@RequestBody @Valid LoanRequest loanRequest, BindingResult bindingResult) {
 		ControllerUtils.validateFields(bindingResult, null);
@@ -67,7 +84,7 @@ public class LoanController {
 				loan.getAmountLoan(),
 				loan.getDateSchedulePayment(),
 				loan.getCreatedAt());
-		return new ApiResponseEntityData<>().responseEntitySuccessData(null, HttpStatus.OK, null, loanResponse);
+		return new ApiResponseEntityData<>().responseEntitySuccessData(null, HttpStatus.CREATED, null, loanResponse);
 	}
 	
 	
