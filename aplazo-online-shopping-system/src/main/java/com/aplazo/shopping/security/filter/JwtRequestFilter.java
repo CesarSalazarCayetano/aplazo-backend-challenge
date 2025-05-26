@@ -36,7 +36,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		String userName = null;
-		String token = JWTUtils.existHeaderJWT(request);
+		String token = JWTUtils.existHeaderJWT(request.getHeader(JWTUtils.HEADER));
 		
 		if(token != null) {
 			userName = JWTUtils.getUserNameFromToken(token);

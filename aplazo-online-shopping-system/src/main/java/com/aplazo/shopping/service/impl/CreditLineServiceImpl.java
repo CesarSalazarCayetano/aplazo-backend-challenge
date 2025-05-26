@@ -28,7 +28,10 @@ public class CreditLineServiceImpl implements ICreditLineService {
 	public CreditLine creditLineAssignment(Customer customer, Integer age) {
 		CreditLineRule creditLineRule = this.iCreditLineRuleService.getCreditLineRuleByAge(age);
 		
-		CreditLine creditLine = CreditLine.builder().customer(customer).creditLineRule(creditLineRule).build();
+		CreditLine creditLine = CreditLine.builder()
+				.customer(customer)
+				.availableCreditLineAmount(creditLineRule.getCreditLineAmount())
+				.creditLineRule(creditLineRule).build();
 		
 		return this.iCreditLineRepository.save(creditLine);
 	}

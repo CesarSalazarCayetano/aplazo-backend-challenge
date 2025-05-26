@@ -13,13 +13,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.aplazo.shopping.components.schemas.request.CustomerRequest;
 import com.aplazo.shopping.enums.ErrorCode;
 import com.aplazo.shopping.exception.ApiException;
+import com.aplazo.shopping.model.dao.CreditLine;
 import com.aplazo.shopping.model.dao.CreditLineRule;
 import com.aplazo.shopping.model.dao.Customer;
+import com.aplazo.shopping.model.dao.User;
 import com.aplazo.shopping.repository.ICustomerRepository;
+import com.aplazo.shopping.security.util.mapper.DtoMapper;
 import com.aplazo.shopping.service.ICreditLineRuleService;
+import com.aplazo.shopping.service.ICreditLineService;
 import com.aplazo.shopping.service.ICustomerService;
+import com.aplazo.shopping.service.IUserService;
 import com.aplazo.shopping.util.RangeUtils;
 
 /**
@@ -29,14 +35,27 @@ import com.aplazo.shopping.util.RangeUtils;
 public class CustomerServiceImpl implements ICustomerService {
 
 	@Autowired
+	private IUserService iUserService;
+	@Autowired
+	private ICreditLineService iCreditLineService;
+	@Autowired
 	private ICustomerRepository iCustomerRepository;
 	@Autowired
 	private ICreditLineRuleService iCreditLineRuleService;
 	
 	@Transactional(rollbackFor = {IllegalArgumentException.class, SQLException.class})
 	@Override
-	public Customer save(Customer customer) {
-		return this.iCustomerRepository.save(customer);
+	public Customer save(CustomerRequest customerRequest) {
+		Customer customer = DtoMapper.customerRequestToCustomer(customerRequest);
+		User user = this.iUserService.findByEmail(customerRequest.getEmail());
+		
+		customer.setUser(user);
+		
+		Customer saveCustomer = this.iCustomerRepository.save(customer);
+		
+		CreditLine creditLine = this.iCreditLineService.creditLineAssignment(saveCustomer, customerRequest.getAge());
+		saveCustomer.setCreditLine(creditLine);
+		return saveCustomer;
 	}
 
 	@Override
@@ -52,6 +71,11 @@ public class CustomerServiceImpl implements ICustomerService {
 		String[] ageRanges = creditLineRule.getAgeRange().split(",");
 		
 		return RangeUtils.getRangeFromString(age, ageRanges[0], ageRanges[1]);
+	}
+
+	@Override
+	public Customer findUserCustomer(Long idUser) {
+		return this.iCustomerRepository.findByIdUser(idUser);
 	}
 
 
