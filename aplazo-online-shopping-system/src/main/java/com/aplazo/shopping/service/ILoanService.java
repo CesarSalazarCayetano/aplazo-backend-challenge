@@ -15,5 +15,6 @@ import com.aplazo.shopping.model.dao.Loan;
 public interface ILoanService {
 	Loan findById(UUID id);
 	Loan save(LoanRequest loan);
+	Loan update(Loan loan);
 	List<Loan> findAllByIdCreditLine(UUID idLoan);
 }

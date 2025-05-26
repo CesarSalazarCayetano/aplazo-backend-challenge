@@ -15,11 +15,12 @@ public enum InstallmentStatus {
 	
 	private String installmentValue;
 
-	InstallmentStatus(String string) {}
+	private InstallmentStatus(String installmentValue) {
+		this.installmentValue = installmentValue;
+	}
 
 	public String getInstallmentValue() {
 		return installmentValue;
 	}
-
 	
 }

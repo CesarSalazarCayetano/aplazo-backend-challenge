@@ -139,6 +139,12 @@
 		    <groupId>org.apache.commons</groupId>
 		    <artifactId>commons-lang3</artifactId>
 		</dependency>
+		<!-- Dependencia para Swagger-ui OpenAPI V3-->
+		<dependency>
+      		<groupId>org.springdoc</groupId>
+      		<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+  	  		<version>2.8.8</version>
+  		</dependency>
 	</dependencies>
 
 	<build>

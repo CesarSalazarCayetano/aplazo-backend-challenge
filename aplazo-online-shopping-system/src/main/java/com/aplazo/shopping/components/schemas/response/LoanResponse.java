@@ -9,6 +9,6 @@ import java.util.UUID;
 /**
  * @author CesarSalazar
  */
-public record LoanResponse(UUID id, UUID customerId, Double amount, LocalDateTime createdAt) {
+public record LoanResponse(UUID id, UUID customerId, Double amount, String paymentSchedule, LocalDateTime createdAt) {
 
 }

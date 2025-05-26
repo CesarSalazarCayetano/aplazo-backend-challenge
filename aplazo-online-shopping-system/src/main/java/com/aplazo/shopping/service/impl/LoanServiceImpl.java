@@ -144,5 +144,10 @@ public class LoanServiceImpl implements ILoanService {
 		Double amountBySchedule = totalAmount / numberOfPayments;
 		return amountBySchedule;
 	}
+
+	@Override
+	public Loan update(Loan loan) {
+		return this.iLoanRepository.save(loan);
+	}
 	
 }

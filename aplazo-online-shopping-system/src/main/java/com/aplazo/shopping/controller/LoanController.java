@@ -49,6 +49,7 @@ public class LoanController {
 		LoanResponse loanResponse = new LoanResponse(idLoan, 
 				loan.getCreditLine().getCustomer().getIdCustomer(), 
 				loan.getAmountLoan(), 
+				loan.getDateSchedulePayment(),
 				loan.getCreatedAt());
 		return new ApiResponseEntityData<>().responseEntitySuccessData(null, HttpStatus.OK, null, loanResponse);
 	}
@@ -63,7 +64,8 @@ public class LoanController {
 		
 		LoanResponse loanResponse = new LoanResponse(loan.getIdLoan(), 
 				loan.getCreditLine().getCustomer().getIdCustomer(), 
-				loan.getAmountLoan(), 
+				loan.getAmountLoan(),
+				loan.getDateSchedulePayment(),
 				loan.getCreatedAt());
 		return new ApiResponseEntityData<>().responseEntitySuccessData(null, HttpStatus.OK, null, loanResponse);
 	}
