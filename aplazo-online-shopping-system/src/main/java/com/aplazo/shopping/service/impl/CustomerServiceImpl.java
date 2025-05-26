@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,9 +74,16 @@ public class CustomerServiceImpl implements ICustomerService {
 		return RangeUtils.getRangeFromString(age, ageRanges[0], ageRanges[1]);
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public Customer findUserCustomer(Long idUser) {
 		return this.iCustomerRepository.findByIdUser(idUser);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Customer findById(UUID id) {
+		return this.iCustomerRepository.findById(id).orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_NOT_FOUND));
 	}
 
 

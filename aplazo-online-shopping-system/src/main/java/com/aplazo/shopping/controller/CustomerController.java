@@ -3,11 +3,15 @@
  */
 package com.aplazo.shopping.controller;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -40,8 +44,22 @@ public class CustomerController {
 	private IUserService iUserService;
 	@Autowired
 	private ICustomerService iCustomerService;
+
+	@GetMapping(path = "/{id}")
+	public ResponseEntity<?> getMethodName(@RequestHeader(name = JWTUtils.HEADER) String token,
+			@PathVariable UUID id) {
+		Customer customer = this.iCustomerService.findById(id);
+		
+		CustomerResponse customerResponse = new CustomerResponse(customer.getIdCustomer(), 
+				customer.getCreditLine().getCreditLineRule().getCreditLineAmount(), 
+				customer.getCreditLine().getAvailableCreditLineAmount(), 
+				customer.getCreatedAt());
+		
+		return new ApiResponseEntityData<>().responseEntitySuccessData(null, HttpStatus.OK, null, customerResponse);
+	}
 	
-	@PostMapping("/create")
+	
+	@PostMapping()
 	public ResponseEntity<?> createCustomer(HttpServletRequest request, 
 			@RequestHeader(name = JWTUtils.HEADER) String token,
 			@RequestBody CustomerRequest customerRequest, BindingResult bindingResult) {
@@ -68,5 +86,6 @@ public class CustomerController {
 		
 		return new ApiResponseEntityData<>().responseEntitySuccessData(null, HttpStatus.CREATED, "Customer created", customerResponse);
 	}
+	
 	
 }
