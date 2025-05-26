@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
@@ -77,7 +78,7 @@ public class CustomerController {
             @ApiResponse (responseCode = "400", description = "Bad request if exist errors on body fields or the age are not valid")
 		}
 	)
-	@PostMapping()
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> createCustomer(HttpServletRequest request, 
 			@RequestHeader(name = JWTUtils.HEADER) String token,
 			@RequestBody CustomerRequest customerRequest, BindingResult bindingResult) {
