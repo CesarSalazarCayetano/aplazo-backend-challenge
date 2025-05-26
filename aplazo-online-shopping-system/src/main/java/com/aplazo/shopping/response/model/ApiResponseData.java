@@ -3,8 +3,6 @@
  */
 package com.aplazo.shopping.response.model;
 
-import org.springframework.http.ResponseEntity;
-
 import lombok.Getter;
 import lombok.Setter;
 

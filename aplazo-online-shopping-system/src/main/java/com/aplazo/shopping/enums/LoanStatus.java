@@ -12,7 +12,9 @@ public enum LoanStatus {
 	
 	private String loanValue;
 
-	LoanStatus(String string) {}
+	private LoanStatus(String loanValue) {
+		this.loanValue = loanValue;
+	}
 
 	public String getLoanValue() {
 		return loanValue;

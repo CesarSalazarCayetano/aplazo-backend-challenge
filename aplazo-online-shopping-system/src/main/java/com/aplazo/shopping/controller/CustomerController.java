@@ -30,6 +30,7 @@ import com.aplazo.shopping.security.util.JWTUtils;
 import com.aplazo.shopping.service.ICustomerService;
 import com.aplazo.shopping.service.IUserService;
 
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
@@ -37,6 +38,7 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 @RestController
 @RequestMapping("/protected/customers")
+@RateLimiter(name = "protected-api")
 @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
 public class CustomerController {
 	

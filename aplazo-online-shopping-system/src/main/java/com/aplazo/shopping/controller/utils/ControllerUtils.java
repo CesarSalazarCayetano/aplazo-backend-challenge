@@ -22,7 +22,7 @@ public class ControllerUtils {
 			List<String> errors = ExceptionUtils.getErrorsFromBindingResult(bindingResult);
 			throw new ApiException(ErrorCode.VALUES_NOT_VALID, errors);
 		}
-		if(!EmailValidator.getInstance().isValid(email)) {
+		if(email != null && !EmailValidator.getInstance().isValid(email)) {
 			throw new ApiException(ErrorCode.EMAIL_NOT_VALID);
 		}
 	}

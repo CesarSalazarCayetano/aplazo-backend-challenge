@@ -14,6 +14,7 @@ import com.aplazo.shopping.response.model.ApiResponse;
 
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 
 /**
  * Class to handler the RunTimeExceptions.
@@ -51,6 +52,16 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<ApiResponse>(apiResponse, errorCode.getHttpCode());
 	}
 
+	@ExceptionHandler(ConstraintViolationException.class)
+    protected ResponseEntity<Object> handleConstraintViolationException(
+            ConstraintViolationException e) {
+		e.printStackTrace();
+		ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
+		ApiResponse apiResponse = 
+				new ApiResponse(errorCode.getCode(), false, errorCode.getHttpCode().value(), null, errorCode.getMessage(), null);
+		return new ResponseEntity<>(apiResponse, errorCode.getHttpCode());
+    }
+	
 //	@Override
 //	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 //			HttpHeaders headers, HttpStatusCode status, WebRequest request) {

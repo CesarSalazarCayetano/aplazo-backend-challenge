@@ -6,6 +6,8 @@ package com.aplazo.shopping.model.dao;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import com.aplazo.shopping.enums.InstallmentStatus;
 
 import jakarta.persistence.Column;
@@ -51,11 +53,11 @@ public class Payment {
 	@Column(name = "scheduled_payment_date", nullable = false)
 	private String scheduledPaymentDate;
 	
-	@NotBlank(message = "the payment status cannot be empty")
-	@Column(name = "payment_status", nullable = false)
+	@Column(name = "payment_status")
 	private InstallmentStatus paymentStatus;
 	
-	@Column(name = "created_at")
+	@Column(name = "created_at", updatable = false)
+	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
 	private LocalDateTime createdAt;
 	

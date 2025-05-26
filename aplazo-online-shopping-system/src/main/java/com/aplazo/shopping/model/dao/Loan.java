@@ -7,8 +7,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import com.aplazo.shopping.enums.LoanStatus;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -18,7 +21,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -48,22 +50,38 @@ public class Loan {
 	private UUID idLoan;
 	
 	@Min(0)
-	@Column(name = "amount_payment")
-	private Double amountPayment;
-
-	@NotBlank(message = "the loan status cannot be empty")
-	@Column(name = "loan_status", nullable = false)
-	private LoanStatus loanStatus; 
+	@Column(name = "purchase_commission")
+	private Double purchaseCommission;
 	
-	@Column(name = "created_at")
+	@Min(0)
+	@Column(name = "amount_loan")
+	private Double amountLoan;
+	
+	@Min(0)
+	@Column(name = "total_amount")
+	private Double totalAmount;
+
+	@Min(0)
+	@Column(name = "amount_by_schedule")
+	private Double amountBySchedule;
+
+	@Column(name = "loan_status")
+	private LoanStatus loanStatus;
+	
+	@NotBlank(message = "The field date schedule payment cannot be empty.")
+	@Column(name = "date_schedule_payment")
+	private String dateSchedulePayment;
+	
+	@Column(name = "created_at", updatable = false)
+	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
 	private LocalDateTime createdAt;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = "id_credit_line")
 	private CreditLine creditLine;
 	
-	@OneToOne
+	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = "id_payment_scheme")
 	private PaymentScheme paymentScheme;
 	

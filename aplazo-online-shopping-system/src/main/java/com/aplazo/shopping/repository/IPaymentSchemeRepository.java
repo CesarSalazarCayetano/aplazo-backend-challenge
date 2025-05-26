@@ -14,4 +14,5 @@ import com.aplazo.shopping.model.dao.PaymentScheme;
 @Repository
 public interface IPaymentSchemeRepository extends JpaRepository<PaymentScheme, Integer> {
 
+	PaymentScheme findByPaymentScheme(String paymentScheme);
 }
