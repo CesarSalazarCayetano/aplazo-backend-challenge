@@ -5,6 +5,7 @@ package com.aplazo.shopping.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -55,7 +56,7 @@ public class UserController {
 		}
 	)
 	@RateLimiter(name = "public-api")
-	@PostMapping("/login")
+	@PostMapping(path = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest, BindingResult bindingResult) {
 		ControllerUtils.validateFields(bindingResult, loginRequest.getEmail());
 		if(!this.iUserService.validateEmailExist(loginRequest.getEmail())) {
@@ -81,7 +82,7 @@ public class UserController {
 	)
 	@Operation(summary = "sing-up", description = "This method register a new user on the API.")
 	@RateLimiter(name = "public-api")
-	@PostMapping("/sign-up")
+	@PostMapping(path = "/sign-up", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> signUp(@RequestBody @Valid LoginRequest loginRequest, BindingResult bindingResult) {
 		ControllerUtils.validateFields(bindingResult, loginRequest.getEmail());
 		if(this.iUserService.validateEmailExist(loginRequest.getEmail())) {
