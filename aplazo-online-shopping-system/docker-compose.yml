@@ -1,0 +1,14 @@
+services:
+  db-aplazo:
+    container_name: db-aplazo
+    image: postgres:latest
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: aplazo_shopping_system_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+    ports:
+      - 5431:5431
+    expose:
+      - 5431
+    command: -p 5431
